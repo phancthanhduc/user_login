@@ -2,12 +2,10 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
 import { Button } from "react-native-paper";
 import styled from "styled-components/native";
-import { RootStackParamList } from "../App";
-import BottomPicture from "../components/bottomPicture";
-
-interface Props {
-  source: string;
-}
+import { RootStackParamList } from "../common/types";
+import BottomPicture from "../components/BottomPicture";
+import { EScreen } from "../common/enum";
+import img from "../assets/blue-pattern.jpg";
 
 type ScreenProps = NativeStackScreenProps<RootStackParamList>;
 
@@ -20,12 +18,12 @@ function LaunchScreen({ navigation }: ScreenProps): JSX.Element {
         PROJECT D
       </StyledTitle>
 
-      <StyledAppLogo source={require("../assets/blue-pattern.jpg")} />
+      <StyledAppLogo source={img} />
 
       <View>
         <StyledButton
           mode="contained"
-          onPress={() => navigation.navigate("Login")}
+          onPress={() => navigation.navigate(EScreen.LOGIN)}
         >
           <StyledText>Login</StyledText>
         </StyledButton>
@@ -51,7 +49,7 @@ const StyledTitle = styled.Text`
   text-align: center;
 `;
 
-const StyledAppLogo = styled.Image<Props>`
+const StyledAppLogo = styled.Image`
   width: 100px;
   height: 100px;
   margin: -64px 0 20px 0;

@@ -3,54 +3,50 @@ import styled from "styled-components/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Button, TextInput, HelperText } from "react-native-paper";
 import { useRecoilState } from "recoil";
-import { RootStackParamList, userState } from "../App";
-import BottomPicture from "../components/bottomPicture";
-
-interface Props {
-  source: string;
-}
+import { RootStackParamList } from "../common/types";
+import { userState } from "../recoil";
+import BottomPicture from "../components/BottomPicture";
+import { EScreen } from "../common/enum";
+import img from "../assets/blue-pattern.jpg";
 
 type ScreenProps = NativeStackScreenProps<RootStackParamList>;
 
 function Login({ navigation }: ScreenProps): JSX.Element {
   const [user, setUser] = useRecoilState(userState);
   const [isError, setIsError] = React.useState(false);
-  const hasErrors = () => {
-    return isError;
+  const onUpdatePhoneNumber = (phoneNumber: string) => {
+    setUser({ ...user, phoneNumber });
+  };
+
+  const onLogin = () => {
+    if (user.phoneNumber && user.phoneNumber.length >= 10) {
+      navigation.navigate(EScreen.OTP_PHASE, {
+        phoneNumber: user.phoneNumber,
+      });
+      setIsError(false);
+    } else {
+      setIsError(true);
+    }
   };
   return (
     <Container>
       <StyledTitle>PROJECT D</StyledTitle>
 
-      <StyledAppLogo source={require("../assets/blue-pattern.jpg")} />
+      <StyledAppLogo source={img} />
 
       <View>
         <StyledTextInput
           mode="outlined"
           label="Your Phone Number"
           value={user.phoneNumber}
-          onChangeText={(phoneNumber) => {
-            setUser({ ...user, phoneNumber });
-          }}
+          onChangeText={onUpdatePhoneNumber}
           outlineColor={"teal"}
           activeOutlineColor={"teal"}
         />
-        <StyledButton
-          mode="contained"
-          onPress={() => {
-            if (user.phoneNumber && user.phoneNumber.length >= 10) {
-              navigation.navigate("OTP_Phase", {
-                phoneNumber: user.phoneNumber,
-              });
-              setIsError(false);
-            } else {
-              setIsError(true);
-            }
-          }}
-        >
+        <StyledButton mode="contained" onPress={onLogin}>
           <StyledText>Login</StyledText>
         </StyledButton>
-        <HelperText type="error" visible={hasErrors()}>
+        <HelperText type="error" visible={!!isError}>
           Your phone number is invalid!
         </HelperText>
         <BottomPicture />
@@ -74,7 +70,7 @@ const StyledTitle = styled.Text`
   top: -100px;
 `;
 
-const StyledAppLogo = styled.Image<Props>`
+const StyledAppLogo = styled.Image`
   width: 100px;
   height: 100px;
   margin: -64px 0 20px 0;

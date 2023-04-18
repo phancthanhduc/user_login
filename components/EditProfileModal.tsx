@@ -9,7 +9,7 @@ import {
   TextInput,
   SegmentedButtons,
 } from "react-native-paper";
-import { userState } from "../App";
+import { userState } from "../recoil";
 
 const EditProfileModal = () => {
   const [visible, setVisible] = React.useState(false);
@@ -64,14 +64,6 @@ const EditProfileModal = () => {
             activeOutlineColor={"teal"}
           />
           <StyledTextTitle>Gender: </StyledTextTitle>
-          {/* <StyledTextInput
-            mode="outlined"
-            label="Enter your gender..."
-            value={gender}
-            onChangeText={(text) => setGender(text)}
-            outlineColor={"teal"}
-            activeOutlineColor={"teal"}
-          /> */}
           <StyledGenderSegment
             value={gender}
             onValueChange={setGender}

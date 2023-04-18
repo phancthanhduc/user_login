@@ -3,20 +3,22 @@ import { useRecoilState } from "recoil";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Button, HelperText, TextInput } from "react-native-paper";
 import styled from "styled-components/native";
-import { RootStackParamList, userState } from "../App";
-import BottomPicture from "../components/bottomPicture";
+import { RootStackParamList } from "../common/types";
+import { userState } from "../recoil";
+import BottomPicture from "../components/BottomPicture";
+import { EScreen } from "../common/enum";
+import img from "../assets/blue-pattern.jpg";
 
-interface Props {
-  source: string;
-}
+type ScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  EScreen.OTP_PHASE
+>;
 
-type ScreenProps = NativeStackScreenProps<RootStackParamList, "Login">;
-
-function OTPScreen({ navigation, route }: ScreenProps): JSX.Element {
+function OTPScreen({ navigation }: ScreenProps): JSX.Element {
   const [user, setUser] = useRecoilState(userState);
   const [text, setText] = React.useState("");
   const [isError, setIsError] = React.useState(false);
-  const [currentOTP, setCurrentOTP] = React.useState("");
+
   const generatedOTP = () => {
     let number: number;
     let arrNum = [];
@@ -26,20 +28,26 @@ function OTPScreen({ navigation, route }: ScreenProps): JSX.Element {
     }
     return arrNum.join("");
   };
-  React.useEffect(() => {
-    setCurrentOTP(generatedOTP());
-  }, []);
-
+  const [currentOTP, setCurrentOTP] = React.useState(generatedOTP());
   console.log(currentOTP);
-  const hasErrors = () => {
-    return isError;
+
+  const onLogin = () => {
+    if (text === currentOTP) {
+      setUser({ ...user, isValidated: true });
+      navigation.navigate(EScreen.PROFILE, {
+        phoneNumber: user.phoneNumber,
+        isValidated: user.isValidated,
+      });
+    } else {
+      setIsError(true);
+    }
   };
 
   return (
     <Container>
       <StyledTitle>PROJECT D</StyledTitle>
 
-      <StyledAppLogo source={require("../assets/blue-pattern.jpg")} />
+      <StyledAppLogo source={img} />
 
       <View>
         <StyledTextInput
@@ -50,23 +58,10 @@ function OTPScreen({ navigation, route }: ScreenProps): JSX.Element {
           outlineColor={"teal"}
           activeOutlineColor={"teal"}
         />
-        <StyledButton
-          mode="contained"
-          onPress={() => {
-            if (text === currentOTP) {
-              setUser({ ...user, isValidated: true });
-              navigation.navigate("Profile", {
-                phoneNumber: user.phoneNumber,
-                isValidated: user.isValidated,
-              });
-            } else {
-              setIsError(true);
-            }
-          }}
-        >
+        <StyledButton mode="contained" onPress={onLogin}>
           <StyledText>Login</StyledText>
         </StyledButton>
-        <HelperText type="error" visible={hasErrors()}>
+        <HelperText type="error" visible={!!isError}>
           Your OTP-code is invalid!
         </HelperText>
         <BottomPicture />
@@ -90,7 +85,7 @@ const StyledTitle = styled.Text`
   top: -100px;
 `;
 
-const StyledAppLogo = styled.Image<Props>`
+const StyledAppLogo = styled.Image`
   width: 100px;
   height: 100px;
   margin: -64px 0 20px 0;

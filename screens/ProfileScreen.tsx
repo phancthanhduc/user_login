@@ -1,27 +1,24 @@
 import React from "react";
 import styled from "styled-components/native";
 import { useRecoilValue } from "recoil";
-import { userState } from "../App";
-import BottomPicture from "../components/bottomPicture";
+import { userState } from "../recoil";
+import BottomPicture from "../components/BottomPicture";
 import EditProfileModal from "../components/EditProfileModal";
-
-interface Props {
-  source: string;
-}
+import img from "../assets/blue-pattern.jpg";
 
 function ProfileScreen(): JSX.Element {
   const user = useRecoilValue(userState);
   return (
     <Container>
       <Heading>
-        <StyledAppLogo source={require("../assets/blue-pattern.jpg")} />
+        <StyledAppLogo source={img} />
         <StyledTitle>USER PROFILE</StyledTitle>
       </Heading>
 
       <View>
         <StyledTextTitle>First name: </StyledTextTitle>
         <StyledTextInforAnwser>
-          {user.firstName ? user.firstName : "Your first name"}
+          {user.firstName || "Your first name"}
         </StyledTextInforAnwser>
         <StyledTextTitle>Last name: </StyledTextTitle>
         <StyledTextInforAnwser>
@@ -64,7 +61,7 @@ const StyledTitle = styled.Text`
   margin-left: 24px;
 `;
 
-const StyledAppLogo = styled.Image<Props>`
+const StyledAppLogo = styled.Image`
   width: 32px;
   height: 32px;
   margin-left: 10px;
